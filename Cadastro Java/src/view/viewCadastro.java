@@ -5,8 +5,12 @@
  */
 package view;
 
+import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultTreeModel;
 import model.bean.Categoria;
+import model.bean.Produto;
 import model.dao.CategoriaDAO;
+import model.dao.ProdutoDAO;
 
 /**
  *
@@ -14,6 +18,7 @@ import model.dao.CategoriaDAO;
  */
 public class viewCadastro extends javax.swing.JFrame {
 
+    private DefaultTableModel dtmProdutos;
     /**
      * Creates new form viewCadastro
      * metoto Construtor
@@ -21,8 +26,28 @@ public class viewCadastro extends javax.swing.JFrame {
     public viewCadastro() {
         initComponents();
         preencherComboBoxCategorias();
+        dtmProdutos = (DefaultTableModel) jTableProdutos.getModel();
+        preencherTabelaProdutos();
     }
     
+    private void preencherTabelaProdutos(){
+        ProdutoDAO pDao = new ProdutoDAO();
+        int idProduto = 0;
+        String descProduto = "";
+        int quantidade = 0;
+        double valor = 0.0d;
+        int idCategoria = 0;
+        dtmProdutos.setRowCount(0);//reseta a teblea
+            for(Produto p :pDao.findAll()){
+            idProduto = p.getIdProduto();
+            descProduto = p.getDescricao();
+            quantidade = p.getQtd();
+            valor = p.getValor();
+            idCategoria = p.getCategoria().getIdCategoria();
+            Object[] dados = {idProduto,descProduto,quantidade,valor,idCategoria};
+            dtmProdutos.addRow(dados);
+        }
+    }
     private void preencherComboBoxCategorias(){
         CategoriaDAO catDao = new CategoriaDAO();
         for(Categoria cat:catDao.findAll()){

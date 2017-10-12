@@ -5,6 +5,7 @@
  */
 package view;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultTreeModel;
 import model.bean.Categoria;
@@ -25,8 +26,8 @@ public class viewCadastro extends javax.swing.JFrame {
      */
     public viewCadastro() {
         initComponents();
-        preencherComboBoxCategorias();
         dtmProdutos = (DefaultTableModel) jTableProdutos.getModel();
+        preencherComboBoxCategorias();        
         preencherTabelaProdutos();
     }
     
@@ -39,6 +40,24 @@ public class viewCadastro extends javax.swing.JFrame {
         int idCategoria = 0;
         dtmProdutos.setRowCount(0);//reseta a teblea
             for(Produto p :pDao.findAll()){
+            idProduto = p.getIdProduto();
+            descProduto = p.getDescricao();
+            quantidade = p.getQtd();
+            valor = p.getValor();
+            idCategoria = p.getCategoria().getIdCategoria();
+            Object[] dados = {idProduto,descProduto,quantidade,valor,idCategoria};
+            dtmProdutos.addRow(dados);
+        }
+    }
+    private void preencherTabelaProdutos(int idCat){
+        ProdutoDAO pDao = new ProdutoDAO();
+        int idProduto = 0;
+        String descProduto = "";
+        int quantidade = 0;
+        double valor = 0.0d;
+        int idCategoria = 0;
+        dtmProdutos.setRowCount(0);//reseta a teblea
+            for(Produto p :pDao.findAll(idCat)){
             idProduto = p.getIdProduto();
             descProduto = p.getDescricao();
             quantidade = p.getQtd();
@@ -77,6 +96,7 @@ public class viewCadastro extends javax.swing.JFrame {
         jComboBoxCategorias = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableProdutos = new javax.swing.JTable();
+        jButtonMostar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -93,6 +113,12 @@ public class viewCadastro extends javax.swing.JFrame {
         Excluir.setText("Excluir");
 
         jLabelCategorias.setText("Categorias");
+
+        jComboBoxCategorias.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxCategoriasActionPerformed(evt);
+            }
+        });
 
         jTableProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -119,6 +145,13 @@ public class viewCadastro extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTableProdutos);
 
+        jButtonMostar.setText("Mostrar");
+        jButtonMostar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonMostarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -129,14 +162,16 @@ public class viewCadastro extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButtonCadastrar)
-                                .addGap(18, 18, 18)
+                                .addComponent(jButtonCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButtonAlterar)
-                                .addGap(18, 18, 18)
-                                .addComponent(Excluir))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Excluir)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                                .addComponent(jButtonMostar))
                             .addComponent(jLabel1)
                             .addComponent(jTextFieldDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,7 +207,8 @@ public class viewCadastro extends javax.swing.JFrame {
                     .addComponent(jButtonAlterar)
                     .addComponent(Excluir)
                     .addComponent(jLabelCategorias)
-                    .addComponent(jComboBoxCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBoxCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonMostar))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -180,6 +216,21 @@ public class viewCadastro extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jComboBoxCategoriasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxCategoriasActionPerformed
+        // TODO add your handling code here:
+        Categoria cat = new Categoria();
+        //casting de 9categoria)
+        cat = (Categoria)jComboBoxCategorias.getSelectedItem();
+        //para depuração
+       // JOptionPane.showMessageDialog(null, cat);
+       preencherTabelaProdutos(cat.getIdCategoria());
+    }//GEN-LAST:event_jComboBoxCategoriasActionPerformed
+
+    private void jButtonMostarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMostarActionPerformed
+        // TODO add your handling code here:
+        preencherTabelaProdutos();
+    }//GEN-LAST:event_jButtonMostarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -220,6 +271,7 @@ public class viewCadastro extends javax.swing.JFrame {
     private javax.swing.JButton Excluir;
     private javax.swing.JButton jButtonAlterar;
     private javax.swing.JButton jButtonCadastrar;
+    private javax.swing.JButton jButtonMostar;
     private javax.swing.JComboBox<Object> jComboBoxCategorias;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
